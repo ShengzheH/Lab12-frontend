@@ -53,30 +53,40 @@ export default {
         description: '',
         location: '',
         organizer: { id: '', name: '' }
-      }
+      },
+      files: []
     }
   },
   methods: {
     saveEvent() {
-      EventService.saveEvent(this.event)
-        .then((response) => {
-          console.log(response)
-          this.$router.push({
-            name: 'EventLayoutView',
-            params: { id: response.data.id }
-          })
-          this.GStore.flashMessage =
-            'You are succcessfully add a new event for ' + response.data.title
-          setTimeout(() => {
-            this.GStore.flashMessage = ''
-          }, 3000)
+      // console.log(this.files)
+      Promise.all(
+        this.files.map((file) => {
+          return EventService.updateFile(file)
         })
-        .catch(() => {
-          this.$router.push('NetworkError')
-        })
+      ).then((response) => {
+        console.log(response)
+        console.log('finish upload file')
+      })
+      // EventService.saveEvent(this.event)
+      //   .then((response) => {
+      //     console.log(response)
+      //     this.$router.push({
+      //       name: 'EventLayoutView',
+      //       params: { id: response.data.id }
+      //     })
+      //     this.GStore.flashMessage =
+      //       'You are succcessfully add a new event for ' + response.data.title
+      //     setTimeout(() => {
+      //       this.GStore.flashMessage = ''
+      //     }, 3000)
+      //   })
+      //   .catch(() => {
+      //     this.$router.push('NetworkError')
+      //   })
     },
     handleImages(files) {
-      console.log(files)
+      this.files = files
     }
   }
 }
